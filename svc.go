@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/pkg/errors"
 	//"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -59,7 +60,7 @@ func CreateSearch(c *Config) (*Search, error) {
 func (this *Search) Result() (string, error) {
 	var ret int
 	var err error
-	switch this.CntrollerType {
+	switch this.ControllerType {
 	case "daemonset", "ds":
 		ret, err = this.Daemonset()
 	case "deployment", "deploy":
@@ -67,12 +68,12 @@ func (this *Search) Result() (string, error) {
 	case "statefulset", "state", "s":
 		ret, err = this.Statefulset()
 	default:
-		err = fmt.Sprintf("err: wrong type of controller, as instance: deployment, statefulset or daemonset")
-		ret = nil
+		err = errors.New("err: wrong type of controller, as instance: deployment, statefulset or daemonset")
+		ret = -1 
 	}
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return "", err
 	}
 	this.Total = ret
 	ip, err := this.GetEndpoints()
@@ -83,39 +84,36 @@ func (this *Search) Daemonset() (int, error) {
 	cli := this.Client
 	namespace := this.Namespace
 	name := this.ControllerName
-	svc := this.Service
 	obj, err := cli.ExtensionsV1beta1().DaemonSets(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return -1, err
 	}
 	total := int(obj.Status.DesiredNumberScheduled)
 	return total, err
 }
 
-func (this *Search) Deployment() (string, error) {
+func (this *Search) Deployment() (int, error) {
 	cli := this.Client
 	namespace := this.Namespace
 	name := this.ControllerName
-	svc := this.Service
 	obj, err := cli.ExtensionsV1beta1().Deployments(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return -1, err
 	}
 	total := int(*(obj.Spec.Replicas)) // deployment, statefulset
 	return total, err
 }
 
-func (this *Search) Statefulset() (string, nil) {
+func (this *Search) Statefulset() (int, error) {
 	cli := this.Client
 	namespace := this.Namespace
 	name := this.ControllerName
-	svc := this.Service
 	obj, err := cli.AppsV1beta1().StatefulSets(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
-		return nil, err
+		return -1, err
 	}
 	total := int(*(obj.Spec.Replicas)) // deployment, statefulset
 	return total, err
@@ -129,7 +127,7 @@ func (this *Search) GetEndpoints() (string, error) {
 		eps, err := cli.CoreV1().Endpoints(namespace).Get(svc, metav1.GetOptions{})
 		if err != nil {
 			log.Println(err)
-			return nil, err
+			return "", err
 		}
 		n1 := len(eps.Subsets)
 		for i := 0; i < n1; i++ {
@@ -148,7 +146,8 @@ func (this *Search) GetEndpoints() (string, error) {
 			time.Sleep(3 * time.Second)
 		}
 	}
-	err := fmt.Sprintf("cannot find IP of %v.%v", this.Service, this.Namespace)
+	msg := fmt.Sprintf("err: cannot find IP of %v.%v", this.Service, this.Namespace)
+	err := errors.New(msg)
 	log.Println(err)
-	return nil, err
+	return "", err
 }
