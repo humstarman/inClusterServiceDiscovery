@@ -148,7 +148,7 @@ func (this *Search) GetEndpoints() (string, error) {
 			time.Sleep(3 * time.Second)
 		}
 	}
-	err = fmt.Sprintf("cannot find IP of %v.%v", this.Service, this.Namespace)
+	err := fmt.Sprintf("cannot find IP of %v.%v", this.Service, this.Namespace)
 	log.Println(err)
 	return nil, err
 }
