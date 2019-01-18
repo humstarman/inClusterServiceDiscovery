@@ -1,8 +1,8 @@
-package inClusterServiceDiscover
+package inClusterServiceDiscovery
 
 type Config struct {
-    ControllerName string
-    ControllerType string
-    Namespace      string
-    Service        string
+	ControllerName string
+	ControllerType string
+	Namespace      string
+	Service        string
 }

@@ -45,10 +45,10 @@ func CreateSearch(c *Config) (*Search, error) {
 }
 
 func (this *Search) Print() {
-	log.Printf("Namespace: %v\n", this.Namespace)	
-	log.Printf("ControllerName: %v\n", this.ControllerName)	
-	log.Printf("ControllerType: %v\n", this.ControllerType)	
-	log.Printf("Service: %v\n", this.Service)	
+	log.Printf("Namespace: %v\n", this.Namespace)
+	log.Printf("ControllerName: %v\n", this.ControllerName)
+	log.Printf("ControllerType: %v\n", this.ControllerType)
+	log.Printf("Service: %v\n", this.Service)
 }
 
 func (this *Search) Result() (string, error) {
@@ -63,7 +63,7 @@ func (this *Search) Result() (string, error) {
 		ret, err = this.Statefulset()
 	default:
 		err = errors.New("err: wrong type of controller, as instance: deployment, statefulset or daemonset")
-		ret = -1 
+		ret = -1
 	}
 	if err != nil {
 		log.Println(err)
