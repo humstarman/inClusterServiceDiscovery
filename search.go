@@ -69,7 +69,11 @@ func (this *Search) Result() (string, error) {
 		ret, err = this.Statefulset()
 	case "":
 		ips, err := this.Endpoint()
-		return ips, err
+		if err != nil {
+			log.Println(err)
+			return "", err
+		}
+		return ips, nil
 	default:
 		err = errors.New("err: wrong type of controller, as instance: deployment, statefulset or daemonset")
 		ret = -1
@@ -80,7 +84,7 @@ func (this *Search) Result() (string, error) {
 	}
 	this.Total = ret
 	ip, err := this.GetEndpoints()
-	return ip, err
+	return ip, nil
 }
 
 func (this *Search) Daemonset() (int, error) {
@@ -93,7 +97,7 @@ func (this *Search) Daemonset() (int, error) {
 		return -1, err
 	}
 	total := int(obj.Status.DesiredNumberScheduled)
-	return total, err
+	return total, nil
 }
 
 func (this *Search) Deployment() (int, error) {
@@ -106,7 +110,7 @@ func (this *Search) Deployment() (int, error) {
 		return -1, err
 	}
 	total := int(*(obj.Spec.Replicas)) // deployment, statefulset
-	return total, err
+	return total, nil
 }
 
 func (this *Search) Statefulset() (int, error) {
@@ -119,7 +123,7 @@ func (this *Search) Statefulset() (int, error) {
 		return -1, err
 	}
 	total := int(*(obj.Spec.Replicas)) // deployment, statefulset
-	return total, err
+	return total, nil
 }
 
 func (this *Search) GetEndpoints() (string, error) {
@@ -144,7 +148,7 @@ func (this *Search) GetEndpoints() (string, error) {
 					ips += fmt.Sprintf("%v", addrs[j].IP)
 					sep = this.Separator
 				}
-				return ips, err
+				return ips, nil
 			}
 			time.Sleep(3 * time.Second)
 		}
