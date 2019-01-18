@@ -27,7 +27,7 @@ type Search struct {
 
 func CreateSearch(c *Config) (*Search, error) {
 	s := Search{}
-	ccpoy(c, &s)
+	ccopy(c, &s)
 	s.Try = 100
 	s.Separator = ","
 	config, err := rest.InClusterConfig()
