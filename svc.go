@@ -12,6 +12,13 @@ import (
 	//v1beta1 "k8s.io/api/extensions/v1beta1"
 )
 
+type Config struct {
+	ControllerName string
+	ControllerType string
+	Namespace      string
+	Service        string
+}
+
 type Search struct {
 	ControllerName string
 	ControllerType string
@@ -24,9 +31,15 @@ type Search struct {
 	Ip             string
 }
 
-func CreateSearch() (*Search, error) {
+func CreateSearch(c *Config) (*Search, error) {
 	s := Search{}
-	s.Namespace = "default"
+	s.Namespace = c.Namespace
+	if s.Namespace == "" {
+		s.Namespace = "default"
+	}
+	s.Service = c.Service
+	s.ControllerName = c.ControllerName
+	s.ControllerType = c.ControllerType
 	s.Try = 100
 	s.Separator = ","
 	config, err := rest.InClusterConfig()
