@@ -68,7 +68,8 @@ func (this *Search) Result() (string, error) {
 	case "statefulset", "state", "s":
 		ret, err = this.Statefulset()
 	case "":
-		ret, err = this.Endpoint()
+		ips, err := this.Endpoint()
+		return ips, err
 	default:
 		err = errors.New("err: wrong type of controller, as instance: deployment, statefulset or daemonset")
 		ret = -1
