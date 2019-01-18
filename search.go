@@ -160,7 +160,7 @@ func (this *Search) Endpoint() (string, error) {
 	namespace := this.Namespace
 	svc := this.Service
 	for try := 0; try < Try; try++ {
-		for c := 0; i < Count; i++ {
+		for c := 0; c < Count; c++ {
 			eps, err := cli.CoreV1().Endpoints(namespace).Get(svc, metav1.GetOptions{})
 			if err != nil {
 				log.Println(err)
