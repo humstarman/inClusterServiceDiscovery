@@ -57,6 +57,13 @@ func CreateSearch(c *Config) (*Search, error) {
 	return &s, err
 }
 
+func (this *Search) Print() {
+	log.Printf("Namespace: %v\n", this.Namespace)	
+	log.Printf("ControllerName: %v\n", this.ControllerName)	
+	log.Printf("ControllerType: %v\n", this.ControllerType)	
+	log.Printf("Service: %v\n", this.Service)	
+}
+
 func (this *Search) Result() (string, error) {
 	var ret int
 	var err error
