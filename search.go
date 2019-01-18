@@ -13,23 +13,29 @@ import (
 	//v1beta1 "k8s.io/api/extensions/v1beta1"
 )
 
+const (
+	Try   = 100
+	Count = 3
+)
+
 type Search struct {
 	ControllerName string
 	ControllerType string
 	Namespace      string
 	Service        string
 	Separator      string
-	Try            int
 	Total          int
 	Client         *kubernetes.Clientset
 	Ip             string
+	Counts         []int
+	Tmp            string
 }
 
 func CreateSearch(c *Config) (*Search, error) {
 	s := Search{}
 	ccopy(c, &s)
-	s.Try = 100
 	s.Separator = ","
+	s.Counts = make([]int, Count, Count)
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		log.Println(err)
@@ -61,6 +67,8 @@ func (this *Search) Result() (string, error) {
 		ret, err = this.Deployment()
 	case "statefulset", "state", "s":
 		ret, err = this.Statefulset()
+	case "":
+		ret, err = this.Endpoint()
 	default:
 		err = errors.New("err: wrong type of controller, as instance: deployment, statefulset or daemonset")
 		ret = -1
@@ -117,7 +125,7 @@ func (this *Search) GetEndpoints() (string, error) {
 	cli := this.Client
 	namespace := this.Namespace
 	svc := this.Service
-	for try := 0; try < this.Try; try++ {
+	for try := 0; try < Try; try++ {
 		eps, err := cli.CoreV1().Endpoints(namespace).Get(svc, metav1.GetOptions{})
 		if err != nil {
 			log.Println(err)
@@ -139,6 +147,49 @@ func (this *Search) GetEndpoints() (string, error) {
 			}
 			time.Sleep(3 * time.Second)
 		}
+	}
+	msg := fmt.Sprintf("err: cannot find IP of %v.%v", this.Service, this.Namespace)
+	err := errors.New(msg)
+	log.Println(err)
+	return "", err
+}
+
+func (this *Search) Endpoint() (string, error) {
+	cli := this.Client
+	namespace := this.Namespace
+	svc := this.Service
+	for try := 0; try < Try; try++ {
+		for c := 0; i < Count; i++ {
+			eps, err := cli.CoreV1().Endpoints(namespace).Get(svc, metav1.GetOptions{})
+			if err != nil {
+				log.Println(err)
+				return "", err
+			}
+			addrs := eps.Subsets[0].Addresses
+			n := len(addrs)
+			this.Counts[c] = n
+			ips := ""
+			sep := ""
+			for j := 0; j < n; j++ {
+				ips += sep
+				ips += fmt.Sprintf("%v", addrs[j].IP)
+				sep = this.Separator
+			}
+			this.Tmp = ips
+		}
+		sum := 0
+		max := -1
+		for _, num := range this.Counts {
+			sum += num
+			if num > max {
+				max = num
+			}
+		}
+		if sum == max*Count {
+			ret := this.Tmp
+			return ret, nil
+		}
+		time.Sleep(3 * time.Second)
 	}
 	msg := fmt.Sprintf("err: cannot find IP of %v.%v", this.Service, this.Namespace)
 	err := errors.New(msg)
