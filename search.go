@@ -9,13 +9,12 @@ import (
 	//"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
-	"k8s.io/client-go/rest"
+	//"k8s.io/client-go/rest"
 	//v1beta1 "k8s.io/api/extensions/v1beta1"
 )
 
 const (
-	Try   = 100
-	Count = 3
+	Try = 100
 )
 
 type Search struct {
@@ -29,25 +28,6 @@ type Search struct {
 	Ip             string
 	Counts         []int
 	Tmp            string
-}
-
-func CreateSearch(c *Config) (*Search, error) {
-	s := Search{}
-	ccopy(c, &s)
-	s.Separator = ","
-	s.Counts = make([]int, Count, Count)
-	config, err := rest.InClusterConfig()
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	cli, err := kubernetes.NewForConfig(config)
-	if err != nil {
-		log.Println(err)
-		return nil, err
-	}
-	s.Client = cli
-	return &s, err
 }
 
 func (this *Search) Print() {
