@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/pkg/errors"
+	//"github.com/pkg/errors"
 	//"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -55,7 +55,7 @@ func (this *Search) Result() (string, error) {
 		}
 		return ips, nil
 	default:
-		err = errors.New("err: wrong type of controller, as instance: deployment, statefulset or daemonset")
+		err = fmt.Errorf("err: wrong type of controller, as instance: deployment, statefulset or daemonset")
 		ret = -1
 	}
 	if err != nil {
@@ -134,7 +134,7 @@ func (this *Search) GetEndpoints() (string, error) {
 		}
 	}
 	msg := fmt.Sprintf("err: cannot find IP of %v.%v", this.Service, this.Namespace)
-	err := errors.New(msg)
+	err := fmt.Errorf(msg)
 	log.Println(err)
 	return "", err
 }
@@ -177,7 +177,7 @@ func (this *Search) Endpoint() (string, error) {
 		time.Sleep(3 * time.Second)
 	}
 	msg := fmt.Sprintf("err: cannot find IP of %v.%v", this.Service, this.Namespace)
-	err := errors.New(msg)
+	err := fmt.Errorf(msg)
 	log.Println(err)
 	return "", err
 }
