@@ -14,7 +14,7 @@ import (
 )
 
 const (
-	try = 100
+	trys = 100
 )
 
 type Search struct {
@@ -63,7 +63,7 @@ func (this *Search) Result() (string, error) {
 		return "", err
 	}
 	this.total = ret
-	ip, err := this.GetEndpoints()
+	ip, err := this.getEndpoints()
 	return ip, nil
 }
 
@@ -120,7 +120,7 @@ func (this *Search) getEndpoints() (string, error) {
 		for i := 0; i < n1; i++ {
 			addrs := eps.Subsets[i].Addresses
 			n2 := len(addrs)
-			if n2 == this.Total {
+			if n2 == this.total {
 				ips := ""
 				sep := ""
 				for j := 0; j < n2; j++ {
@@ -133,7 +133,7 @@ func (this *Search) getEndpoints() (string, error) {
 			time.Sleep(3 * time.Second)
 		}
 	}
-	msg := fmt.Sprintf("err: cannot find IP of %v.%v", this.Service, this.Namespace)
+	msg := fmt.Sprintf("err: cannot find IP of %v.%v", this.service, this.namespace)
 	err := fmt.Errorf(msg)
 	log.Println(err)
 	return "", err
@@ -141,7 +141,7 @@ func (this *Search) getEndpoints() (string, error) {
 
 func (this *Search) endpoint() (string, error) {
 	cli := this.client
-	namespace := this.camespace
+	namespace := this.namespace
 	svc := this.service
 	for try := 0; try < trys; try++ {
 		for c := 0; c < Count; c++ {
@@ -176,7 +176,7 @@ func (this *Search) endpoint() (string, error) {
 		}
 		time.Sleep(3 * time.Second)
 	}
-	msg := fmt.Sprintf("err: cannot find IP of %v.%v", this.Service, this.Namespace)
+	msg := fmt.Sprintf("err: cannot find IP of %v.%v", this.service, this.namespace)
 	err := fmt.Errorf(msg)
 	log.Println(err)
 	return "", err
