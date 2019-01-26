@@ -1,11 +1,11 @@
 package inClusterServiceDiscovery
 
 func ccopy(c *Config, s *Search) {
-	s.Namespace = c.Namespace
-	if s.Namespace == "" {
-		s.Namespace = "default"
+	s.namespace = c.Namespace
+	if s.namespace == "" {
+		s.namespace = "default"
 	}
-	s.Service = c.Service
-	s.ControllerName = c.ControllerName
-	s.ControllerType = c.ControllerType
+	s.service = c.Service
+	s.name = c.Name
+	s.typed = c.Type
 }

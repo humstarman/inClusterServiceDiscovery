@@ -1,8 +1,8 @@
 package inClusterServiceDiscovery
 
 type Config struct {
-	ControllerName string
-	ControllerType string
-	Namespace      string
-	Service        string
+	Name      string `json:"name"`
+	Type      string `json:"type"`
+	Namespace string `"json:namespace"`
+	Service   string `json:"service"`
 }

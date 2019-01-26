@@ -62,3 +62,14 @@ func SimpleSearch(str string) (*Search, error) {
 	s.Client = cli
 	return &s, err
 }
+
+func Create(x interface{}) (*Search, error) {
+	switch x.(type) {
+	case string:
+		return SimpleSearch(x)
+	case *Config:
+		return CreateSearch(x)
+	}
+	err := fmt.Errorf("error: wrong type")
+	return nil, err
+}
