@@ -6,7 +6,6 @@ import (
 	//"time"
 	"strings"
 
-	//"github.com/pkg/errors"
 	//"k8s.io/apimachinery/pkg/api/errors"
 	//metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
@@ -15,15 +14,15 @@ import (
 )
 
 const (
-	Count     = 3
-	Separator = ","
+	count     = 3
+	separator = ","
 )
 
-func CreateSearch(c *Config) (*Search, error) {
+func createSearch(c *Config) (*Search, error) {
 	s := Search{}
 	ccopy(c, &s)
-	s.Separator = Separator
-	s.Counts = make([]int, Count, Count)
+	s.separator = Separator
+	s.counts = make([]int, count, count)
 	config, err := rest.InClusterConfig()
 	if err != nil {
 		log.Println(err)
@@ -34,20 +33,20 @@ func CreateSearch(c *Config) (*Search, error) {
 		log.Println(err)
 		return nil, err
 	}
-	s.Client = cli
+	s.client = cli
 	return &s, err
 }
 
-func SimpleSearch(str string) (*Search, error) {
+func simpleSearch(str string) (*Search, error) {
 	s := Search{}
-	s.Separator = Separator
+	s.separator = separator
 	s.Counts = make([]int, Count, Count)
 	vals := strings.Split(str, ".")
-	s.Service = vals[0]
+	s.service = vals[0]
 	if len(vals) == 1 {
-		s.Namespace = "default"
+		s.namespace = "default"
 	} else {
-		s.Namespace = vals[1]
+		s.namespace = vals[1]
 	}
 	config, err := rest.InClusterConfig()
 	if err != nil {
@@ -59,16 +58,16 @@ func SimpleSearch(str string) (*Search, error) {
 		log.Println(err)
 		return nil, err
 	}
-	s.Client = cli
+	s.client = cli
 	return &s, err
 }
 
 func Create(x interface{}) (*Search, error) {
 	switch x.(type) {
 	case string:
-		return SimpleSearch(x)
+		return simpleSearch(x)
 	case *Config:
-		return CreateSearch(x)
+		return createSearch(x)
 	}
 	err := fmt.Errorf("error: wrong type")
 	return nil, err

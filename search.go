@@ -83,7 +83,7 @@ func (this *Search) daemonset() (int, error) {
 func (this *Search) deployment() (int, error) {
 	cli := this.client
 	namespace := this.namespace
-	name := this.ControllerName
+	name := this.name
 	obj, err := cli.ExtensionsV1beta1().Deployments(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
 		log.Println(err)
