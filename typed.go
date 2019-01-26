@@ -13,7 +13,7 @@ import (
 	//v1beta1 "k8s.io/api/extensions/v1beta1"
 )
 
-func createSearch(c *Config) (*Search, error) {
+func configd(c *Config) (*Search, error) {
 	s := Search{}
 	ccopy(c, &s)
 	s.separator = separator
@@ -32,7 +32,7 @@ func createSearch(c *Config) (*Search, error) {
 	return &s, err
 }
 
-func simpleSearch(str string) (*Search, error) {
+func simple(str string) (*Search, error) {
 	s := Search{}
 	s.separator = separator
 	s.counts = make([]int, count, count)
@@ -60,9 +60,9 @@ func simpleSearch(str string) (*Search, error) {
 func Create(x interface{}) (*Search, error) {
 	switch x := x.(type) {
 	case string:
-		return simpleSearch(x)
+		return simple(x)
 	case *Config:
-		return createSearch(x)
+		return configd(x)
 	}
 	err := fmt.Errorf("error: wrong type")
 	return nil, err
