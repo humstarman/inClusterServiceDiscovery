@@ -13,11 +13,6 @@ import (
 	//v1beta1 "k8s.io/api/extensions/v1beta1"
 )
 
-const (
-	count     = 3
-	separator = ","
-)
-
 func createSearch(c *Config) (*Search, error) {
 	s := Search{}
 	ccopy(c, &s)

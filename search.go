@@ -13,10 +13,6 @@ import (
 	//v1beta1 "k8s.io/api/extensions/v1beta1"
 )
 
-const (
-	trys = 100
-)
-
 type Search struct {
 	name      string
 	typed     string
