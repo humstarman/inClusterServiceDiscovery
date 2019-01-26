@@ -21,7 +21,7 @@ const (
 func createSearch(c *Config) (*Search, error) {
 	s := Search{}
 	ccopy(c, &s)
-	s.separator = Separator
+	s.separator = separator
 	s.counts = make([]int, count, count)
 	config, err := rest.InClusterConfig()
 	if err != nil {
