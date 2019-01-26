@@ -140,7 +140,7 @@ func (this *Search) endpoint() (string, error) {
 	namespace := this.namespace
 	svc := this.service
 	for try := 0; try < trys; try++ {
-		for c := 0; c < Count; c++ {
+		for c := 0; c < count; c++ {
 			eps, err := cli.CoreV1().Endpoints(namespace).Get(svc, metav1.GetOptions{})
 			if err != nil {
 				log.Println(err)
@@ -166,7 +166,7 @@ func (this *Search) endpoint() (string, error) {
 				max = num
 			}
 		}
-		if sum == max*Count {
+		if sum == max*count {
 			ret := this.tmp
 			return ret, nil
 		}

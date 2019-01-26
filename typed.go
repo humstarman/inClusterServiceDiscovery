@@ -1,7 +1,7 @@
 package inClusterServiceDiscovery
 
 import (
-	//"fmt"
+	"fmt"
 	"log"
 	//"time"
 	"strings"
@@ -35,7 +35,7 @@ func createSearch(c *Config) (*Search, error) {
 func simpleSearch(str string) (*Search, error) {
 	s := Search{}
 	s.separator = separator
-	s.Counts = make([]int, Count, Count)
+	s.counts = make([]int, count, count)
 	vals := strings.Split(str, ".")
 	s.service = vals[0]
 	if len(vals) == 1 {
@@ -58,7 +58,7 @@ func simpleSearch(str string) (*Search, error) {
 }
 
 func Create(x interface{}) (*Search, error) {
-	switch x.(type) {
+	switch x := x.(type) {
 	case string:
 		return simpleSearch(x)
 	case *Config:
